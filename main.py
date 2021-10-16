@@ -8,7 +8,7 @@ import osascript
 import hand_detector_module as hand_detector
 
 # Capturing vid (change filename to 0 if need webcam)
-capture = cv.VideoCapture(1)
+capture = cv.VideoCapture('videos/hand_vid_test.3gp')
 
 pTime = 0
 detector = hand_detector.HandDetector()
