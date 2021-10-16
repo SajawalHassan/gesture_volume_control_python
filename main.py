@@ -40,13 +40,13 @@ while True:
         # Drawing line between them
         cv.line(img, (x1, y1), (x2, y2), (255, 0, 0), 2)
 
-        # Calculating the distense between pointA and pointB
+        # Calculating the distance between pointA and pointB
         lenght = math.hypot(x1 - x2, y1 - y2)
 
         if lenght > 300:
             lenght = 300
 
-        lenght_percentage = int(lenght/300 * 100) # Converting distense into percentage
+        lenght_percentage = int(lenght/300 * 100) # Converting distance into percentage
 
         call(["amixer", "-D", "pulse", "sset", "Master", f"{lenght_percentage}%"]) # Setting master volume to lenght_percentage
 
