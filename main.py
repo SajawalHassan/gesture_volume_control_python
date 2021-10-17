@@ -50,8 +50,12 @@ while True:
 
         lenght_percentage = int(lenght/300 * 100) # Converting distance into percentage
 
-        if platform.system() == 'Windows': # Checks the platform
+        if platform.system() == 'Linux': # Checks the platform
             call(["amixer", "-D", "pulse", "sset", "Master", f"{lenght_percentage}%"])
+
+        elif platform.system() == 'Windows': # Checks the platform
+            call(["amixer", "-D", "pulse", "sset", "Master", f"{lenght_percentage}%"])
+
         else:
             osascript.run(f"set volume output volume {lenght_percentage}") # Setting master volume to lenght_percentage
 
