@@ -2,11 +2,13 @@ import cv2 as cv
 import time
 import math
 from subprocess import call
+import platform
+import osascript
 
 import hand_detector_module as hand_detector
 
 # Capturing vid (change filename to 0 if need webcam)
-capture = cv.VideoCapture("videos/hand_vid_test.3gp")
+capture = cv.VideoCapture('videos/hand_vid_test.3gp')
 
 pTime = 0
 detector = hand_detector.HandDetector()
@@ -48,7 +50,10 @@ while True:
 
         lenght_percentage = int(lenght/300 * 100) # Converting distance into percentage
 
-        call(["amixer", "-D", "pulse", "sset", "Master", f"{lenght_percentage}%"]) # Setting master volume to lenght_percentage
+        if platform.system() == 'Windows': # Checks the platform
+            call(["amixer", "-D", "pulse", "sset", "Master", f"{lenght_percentage}%"])
+        else:
+            osascript.run(f"set volume output volume {lenght_percentage}") # Setting master volume to lenght_percentage
 
     # Calculating fps
     cTime = time.time()
