@@ -1,17 +1,18 @@
 import cv2 as cv
 import time
-import math
-from subprocess import call
-import platform
-import osascript
+import draw
 
 import hand_detector_module as hand_detector
+from ip import ip
 
-# Capturing vid
-capture = cv.VideoCapture(0)
-
+address = ip
 pTime = 0
 detector = hand_detector.HandDetector()
+drawer = draw.Draw()
+
+# Capturing vid
+capture = cv.VideoCapture()
+capture.open(address)
 
 while True:
     # Reading currunt img
@@ -28,36 +29,9 @@ while True:
     lmsList = detector.findPos(img, draw=False)
 
     if len(lmsList) != 0:
-        # Getting coordinates of thumb and index finger tips
-        x1, y1 = lmsList[4][1], lmsList[4][2]
-        x2, y2 = lmsList[8][1], lmsList[8][2]
-        
-        pointA = x1, y1
-        pointB = x2, y2
-
-        # Drawing circle on thumb and index finger
-        cv.circle(img, pointA, 10, (255, 0, 0), -1)
-        cv.circle(img, pointB, 10, (255, 0, 0), -1)
-
-        # Drawing line between them
-        cv.line(img, (x1, y1), (x2, y2), (255, 0, 0), 2)
-
-        # Calculating the distance between pointA and pointB
-        lenght = math.hypot(x1 - x2, y1 - y2)
-
-        if lenght > 300:
-            lenght = 300
-
-        lenght_percentage = int(lenght/300 * 100) # Converting distance into percentage
-
-        if platform.system() == 'Linux': # Checks the platform
-            call(["amixer", "-D", "pulse", "sset", "Master", f"{lenght_percentage}%"])
-
-        elif platform.system() == 'Windows': # Checks the platform
-            call(["amixer", "-D", "pulse", "sset", "Master", f"{lenght_percentage}%"])
-
-        else:
-            osascript.run(f"set volume output volume {lenght_percentage}") # Setting master volume to lenght_percentage
+        drawer.getCoordinates(img, 4, 8)
+        drawer.drawLines(img)
+        drawer.calculateDistance(img)
 
     # Calculating fps
     cTime = time.time()
@@ -65,7 +39,7 @@ while True:
     pTime = cTime
 
     # Displaying fps
-    cv.putText(img, f"Fps: {int(fps)}", (10, 50), cv.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 2)
+    cv.putText(img, f"Fps: {int(fps)}", (10, 50), cv.FONT_HERSHEY_COMPLEX, 1, (0,0,255), 2)
 
     cv.imshow("Video", img)
     key = cv.waitKey(1)
